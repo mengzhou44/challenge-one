@@ -1,9 +1,10 @@
-module.exports = (function() {
-  return {
-    COMMAND_LIST: 'list',
-    COMMAND_GET: 'get',
-    COMMAND_ADD: 'add',
-    COMMAND_REMOVE: 'remove',
-    DATA_FOLDER: './data/'
-  };
-})();
+const DATA_FOLDER = "./data/"
+
+const commands = {
+  LIST: "list",
+  GET: "get",
+  ADD: "add",
+  REMOVE: "remove"
+}
+
+module.exports = { commands, DATA_FOLDER }

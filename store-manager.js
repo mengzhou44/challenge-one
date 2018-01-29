@@ -1,88 +1,85 @@
-module.exports = (function() {
-  var fs = require('fs');
-  var constants = require('./constants');
+const fs = require('fs');
 
-  var store = loadStore();
+const { commands, DATA_FOLDER } = require('./constants');
 
-  function loadStore() {
-    var result = {};
-    fs.readdirSync(constants.DATA_FOLDER).forEach(function(file) {
-      result[file] = String(fs.readFileSync(constants.DATA_FOLDER + file));
-    });
-
-    return result;
+class StoreManager {
+  constructor() {
+    this.store = this.loadStore();
   }
 
-  function saveData(key, value, onSaved) {
-    fs.writeFile(constants.DATA_FOLDER + key, value, function(err) {
-      if (err) throw err;
-      onSaved();
-    });
-  }
-
-  function removeData(key, onRemoved) {
-    fs.unlink(constants.DATA_FOLDER + key, function(err) {
-      if (err) throw err;
-      onRemoved();
-    });
-  }
-
-  function tryDo(func) {
+  tryDo(func) {
     try {
-      func();
+      func(this);
     } catch (err) {
       console.log('error occurred:', err.message);
     }
   }
 
-  function list() {
-    tryDo(function() {
-      for (var property in store) {
-        if (store.hasOwnProperty(property)) {
-          console.log(property, store[property]);
+  loadStore() {
+    let result = {};
+    fs.readdirSync(DATA_FOLDER).forEach(function (file) {
+      result[file] = String(fs.readFileSync(DATA_FOLDER + file));
+    });
+    return result;
+  }
+
+  saveData(key, value, onSaved) {
+    fs.writeFile(DATA_FOLDER + key, value, function (err) {
+      if (err) throw err;
+      onSaved();
+    });
+  }
+
+  removeData(key, onRemoved) {
+    fs.unlink(DATA_FOLDER + key, function (err) {
+      if (err) throw err;
+      onRemoved();
+    });
+  }
+
+  list() {
+    this.tryDo((that) => {
+      for (var property in that.store) {
+        if (that.store.hasOwnProperty(property)) {
+          console.log(property, that.store[property]);
         }
       }
     });
   }
 
-  function get(key) {
-    tryDo(function() {
-      if (!store.hasOwnProperty(key)) {
+  get(key) {
+    this.tryDo((that) => {
+      if (!that.store.hasOwnProperty(key)) {
         throw { message: `key '${key}' is not found.` };
       }
-      console.log(key, store[key]);
+      console.log(key, that.store[key]);
     });
   }
 
-  function add(key, value) {
-    tryDo(function() {
-      if (store.hasOwnProperty(key)) {
+  add(key, value) {
+    this.tryDo((that) => {
+      if (that.store.hasOwnProperty(key)) {
         throw { message: `key '${key}' already exists!` };
       }
 
-      store[key] = value;
-      saveData(key, value, () => {
+      that.store[key] = value;
+      that.saveData(key, value, () => {
         console.log(`key '${key}' is added!`);
       });
     });
   }
 
-  function remove(key, value) {
-    tryDo(function() {
-      if (!store.hasOwnProperty(key)) {
+  remove(key, value) {
+    this.tryDo((that) => {
+      if (!that.store.hasOwnProperty(key)) {
         throw { message: `key '${key}' not found.` };
       }
-      delete store[key];
-      removeData(key, () => {
+      delete that.store[key];
+      that.removeData(key, () => {
         console.log(`key '${key}' is removed!`);
       });
     });
   }
+}
 
-  return {
-    list: list,
-    get: get,
-    add: add,
-    remove: remove
-  };
-})();
+module.exports = StoreManager;

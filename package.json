@@ -5,7 +5,11 @@
   "bin": {
     "store": "./store.js"
   },
-  "keywords": ["store", "values", "keys"],
+  "keywords": [
+    "store",
+    "values",
+    "keys"
+  ],
   "author": "Daniel Zhou",
   "license": "ISC",
   "dependencies": {},
