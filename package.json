@@ -1,0 +1,15 @@
+{
+  "name": "challenge-one",
+  "version": "1.0.0",
+  "description": "a store CLI",
+  "bin": {
+    "store": "./store.js"
+  },
+  "keywords": ["store", "values", "keys"],
+  "author": "Daniel Zhou",
+  "license": "ISC",
+  "dependencies": {},
+  "devDependencies": {
+    "eslint": "^4.10.0"
+  }
+}
