@@ -9,7 +9,7 @@ class StoreManager {
 
   tryDo(func) {
     try {
-      func(this);
+      func.bind(this)();
     } catch (err) {
       console.log('error occurred:', err.message);
     }
@@ -38,44 +38,44 @@ class StoreManager {
   }
 
   list() {
-    this.tryDo((that) => {
-      for (var property in that.store) {
-        if (that.store.hasOwnProperty(property)) {
-          console.log(property, that.store[property]);
+    this.tryDo(() => {
+      for (var property in this.store) {
+        if (this.store.hasOwnProperty(property)) {
+          console.log(property, this.store[property]);
         }
       }
     });
   }
 
   get(key) {
-    this.tryDo((that) => {
-      if (!that.store.hasOwnProperty(key)) {
+    this.tryDo(() => {
+      if (!this.store.hasOwnProperty(key)) {
         throw { message: `key '${key}' is not found.` };
       }
-      console.log(key, that.store[key]);
+      console.log(key, this.store[key]);
     });
   }
 
   add(key, value) {
-    this.tryDo((that) => {
-      if (that.store.hasOwnProperty(key)) {
+    this.tryDo(() => {
+      if (this.store.hasOwnProperty(key)) {
         throw { message: `key '${key}' already exists!` };
       }
 
-      that.store[key] = value;
-      that.saveData(key, value, () => {
+      this.store[key] = value;
+      this.saveData(key, value, () => {
         console.log(`key '${key}' is added!`);
       });
     });
   }
 
   remove(key, value) {
-    this.tryDo((that) => {
-      if (!that.store.hasOwnProperty(key)) {
+    this.tryDo(() => {
+      if (!this.store.hasOwnProperty(key)) {
         throw { message: `key '${key}' not found.` };
       }
-      delete that.store[key];
-      that.removeData(key, () => {
+      delete this.store[key];
+      this.removeData(key, () => {
         console.log(`key '${key}' is removed!`);
       });
     });
